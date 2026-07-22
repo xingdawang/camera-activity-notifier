@@ -1,0 +1,28 @@
+# Copy this file to config.local.yaml during installation.  Do not commit that file:
+# it contains the local authentication token.
+camera:
+  preferred_name: "Logitech Webcam C925e"
+  device_index: null
+  video_size: "1280x720"
+  framerate: 30
+  pixel_format: "uyvy422"
+  on_seconds: 0.8
+  off_seconds: 0.6
+  blink_times: 2
+  ffmpeg_timeout_seconds: 5
+
+server:
+  host: "127.0.0.1"
+  port: 8765
+  auth_token: "generated-during-install"
+  debounce_seconds: 3
+
+notifications:
+  chatgpt_enabled: true
+  codex_enabled: true
+  only_when_background: false
+
+logging:
+  level: "INFO"
+  max_bytes: 1048576
+  backup_count: 3
