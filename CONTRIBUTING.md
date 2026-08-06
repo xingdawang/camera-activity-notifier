@@ -8,6 +8,8 @@ python3 -m venv .venv
 .venv/bin/python -m unittest discover -s tests -v
 node --check chrome-extension/background.js
 node --check chrome-extension/content.js
+node --check chrome-extension/routing.js
+node --test tests/test_routing.js
 ```
 
 ## Scope and safety rules

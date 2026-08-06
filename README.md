@@ -108,6 +108,8 @@ Send the token in `X-Camera-Notifier-Token`.
 node --check chrome-extension/background.js
 node --check chrome-extension/content.js
 node --check chrome-extension/options.js
+node --check chrome-extension/routing.js
+node --test tests/test_routing.js
 ```
 
 The GitHub Actions workflow runs these checks on macOS. Hardware LED behaviour, other-app camera contention, and live ChatGPT UI changes require manual macOS verification.

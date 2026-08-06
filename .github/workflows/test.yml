@@ -17,3 +17,5 @@ jobs:
       - run: node --check chrome-extension/background.js
       - run: node --check chrome-extension/content.js
       - run: node --check chrome-extension/options.js
+      - run: node --check chrome-extension/routing.js
+      - run: node --test tests/test_routing.js
