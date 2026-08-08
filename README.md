@@ -2,14 +2,14 @@
 
 **A local-only macOS completion cue for ChatGPT and Codex, using your webcam's hardware Activity LED.**
 
-When a ChatGPT web response or Codex agent turn finishes, the app briefly opens the configured camera video device. For webcams such as the Logitech C925e, this lights the physical green Activity LED. The camera stream is discarded immediately: this project never saves, shows, or uploads video or audio.
+When a ChatGPT web response or top-level Codex task finishes, the app briefly opens the configured camera video device. For webcams such as the Logitech C925e, this lights the physical green Activity LED. The camera stream is discarded immediately: this project never saves, shows, or uploads video or audio.
 
 > The LED reflects real camera-device access. Close the camera's physical privacy shutter whenever you do not want the sensor to be used.
 
 ## Features
 
 - ChatGPT web completion detection through a Manifest V3 Chrome extension.
-- Codex `agent-turn-complete` integration that preserves an existing Codex notifier through a wrapper.
+- Codex local `task_complete` watcher plus main-thread `Stop` hook, so foreground desktop tasks work without blinking for intermediate model/tool steps or subagent completions.
 - One shared loopback-only notification service with token authentication, queueing, and duplicate suppression.
 - FFmpeg + AVFoundation capture with no audio device and a null output sink.
 - Configurable LED timing, rotating logs, LaunchAgent startup, and safe uninstall.
@@ -18,12 +18,12 @@ When a ChatGPT web response or Codex agent turn finishes, the app briefly opens 
 ## Architecture
 
 ```text
-ChatGPT extension ─┐
-                   ├─ token-authenticated POST → 127.0.0.1 service → FFmpeg/AVFoundation → webcam LED
-Codex notify hook ─┘
+ChatGPT extension ────────┐
+Codex task journal watcher├─ token-authenticated POST → 127.0.0.1 service → FFmpeg/AVFoundation → webcam LED
+Codex Stop hook ──────────┘
 ```
 
-The service accepts notification metadata only; it never receives or stores conversation content.
+The service accepts notification metadata only; it never receives or stores conversation content. The Codex desktop watcher follows only user-originated journals (`thread_source=user`) and parses their canonical `event_msg` / `task_complete` lifecycle lines; internal reviewer/subagent journals and all other lines are discarded.
 
 ## Requirements
 
@@ -41,7 +41,11 @@ chmod +x install.sh start.sh stop.sh status.sh uninstall.sh
 ./install.sh
 ```
 
-The installer creates a virtual environment, installs requirements, generates an ignored `config.local.yaml` containing a random token, installs a user LaunchAgent, and configures a Codex notify wrapper. It creates a timestamped backup before modifying `~/.codex/config.toml`.
+The installer creates a virtual environment, installs requirements, generates an ignored `config.local.yaml` containing a random token, installs a user LaunchAgent with the local Codex task-journal watcher, and adds one user-level Codex `Stop` hook in `~/.codex/hooks.json`. Existing hooks are preserved and a timestamped backup is created before an existing hooks file is changed.
+
+Codex may require a one-time review before running a new local command hook. If Codex reports that the hook needs approval, inspect and trust the exact Camera Activity Notifier hook through the client's hooks review UI (or `/hooks` where available).
+
+Upgrading from an older Camera Activity Notifier installation also removes the legacy camera notify wrapper while restoring the notifier command that wrapper had preserved. Computer Use and unrelated notification commands remain intact.
 
 Then grant Camera access to the applicable Python/Terminal process in **System Settings → Privacy & Security → Camera**.
 
@@ -68,7 +72,7 @@ The detector arms only after a new user message or a user-triggered regenerate/r
 ./uninstall.sh
 ```
 
-`uninstall.sh` removes the LaunchAgent and stops the service, but intentionally leaves local logs and configuration in place.
+`uninstall.sh` removes the LaunchAgent, stops the service, and removes only this project's Codex `Stop` hook. It intentionally leaves local logs and camera configuration in place.
 
 ## Configuration
 

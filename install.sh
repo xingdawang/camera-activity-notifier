@@ -29,8 +29,10 @@ with open(path,'wb') as f: plistlib.dump(payload,f)
 PY
 launchctl bootout "gui/$(id -u)" "$PLIST" 2>/dev/null || true
 launchctl bootstrap "gui/$(id -u)" "$PLIST"
-"$VENV/bin/python" -m app.configure_codex --hook "$ROOT_DIR/app/codex_notify.py" --wrapper "$ROOT_DIR/app/codex_notify_wrapper.py" --original-command-file "$ROOT_DIR/codex-notify-original.json" --python "$VENV/bin/python"
+"$VENV/bin/python" -m app.migrate_codex_notify
+"$VENV/bin/python" -m app.configure_codex_hook --hook "$ROOT_DIR/app/codex_stop_hook.py" --python "$VENV/bin/python"
 print "\nInstalled. In Chrome: chrome://extensions → Developer mode → Load unpacked → $ROOT_DIR/chrome-extension"
+print "Review and trust the Camera Activity Notifier Stop hook if Codex reports that a new hook needs approval."
 print "Grant the running Python process/Terminal Camera access in System Settings → Privacy & Security → Camera."
 print "Testing local service (camera test is deliberately left for you after granting permission):"
 for attempt in {1..10}; do

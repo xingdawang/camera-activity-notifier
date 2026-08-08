@@ -18,6 +18,7 @@ node --test tests/test_routing.js
 - Never add video, audio, screenshot, cloud upload, telemetry, or persistent browser-profile handling.
 - Keep ChatGPT selector heuristics in `chrome-extension/selectors.js`; do not scatter site-specific selectors.
 - Do not log prompts, model answers, tokens, or camera data.
+- Codex desktop notifications must come from top-level user-session `task_complete` events. Keep the main-thread `Stop` hook for ephemeral CLI tasks, and never notify from legacy `agent-turn-complete`, tool, reviewer, or subagent events.
 - Test camera changes manually on macOS. Unit tests must not require a camera.
 
 ## Pull requests

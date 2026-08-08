@@ -128,7 +128,8 @@ def main() -> None:
     args = parser.parse_args()
     try:
         if args.command == "list-devices":
-            for device in list_devices(): print(f"{device.index}: {device.name}")
+            for device in list_devices():
+                print(f"{device.index}: {device.name}")
         elif args.command == "test":
             print(f"Testing {resolve_device().name}")
             blink()

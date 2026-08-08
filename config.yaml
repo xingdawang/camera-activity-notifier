@@ -20,7 +20,8 @@ server:
 notifications:
   chatgpt_enabled: true
   codex_enabled: true
-  only_when_background: false
+  codex_session_watcher_enabled: true
+  codex_session_poll_seconds: 0.5
 
 logging:
   level: "INFO"
